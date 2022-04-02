@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.checkWantAlpha = new System.Windows.Forms.CheckBox();
+            this.checkWantShiny = new System.Windows.Forms.CheckBox();
             this.buttonJSON = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -54,17 +59,22 @@
             this.textBoxSeed = new System.Windows.Forms.TextBox();
             this.checkBoxMMO = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns2)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns)).BeginInit();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.buttonJSON);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
@@ -77,12 +87,68 @@
             this.panel1.Controls.Add(this.checkBoxMMO);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(644, 160);
+            this.panel1.Size = new System.Drawing.Size(644, 195);
             this.panel1.TabIndex = 0;
+            // 
+            // panel5
+            // 
+            this.panel5.BackColor = System.Drawing.SystemColors.Control;
+            this.panel5.Controls.Add(this.textBox1);
+            this.panel5.Controls.Add(this.button1);
+            this.panel5.Controls.Add(this.checkWantAlpha);
+            this.panel5.Controls.Add(this.checkWantShiny);
+            this.panel5.Location = new System.Drawing.Point(3, 157);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(508, 31);
+            this.panel5.TabIndex = 5;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.textBox1.Location = new System.Drawing.Point(3, 4);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(110, 23);
+            this.textBox1.TabIndex = 4;
+            this.textBox1.Text = "Wanted pokémon";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(257, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(113, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Advanced...";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // checkWantAlpha
+            // 
+            this.checkWantAlpha.AutoSize = true;
+            this.checkWantAlpha.Location = new System.Drawing.Point(180, 7);
+            this.checkWantAlpha.Name = "checkWantAlpha";
+            this.checkWantAlpha.Size = new System.Drawing.Size(57, 19);
+            this.checkWantAlpha.TabIndex = 12;
+            this.checkWantAlpha.Text = "Alpha";
+            this.checkWantAlpha.UseVisualStyleBackColor = true;
+            this.checkWantAlpha.CheckedChanged += new System.EventHandler(this.checkWant_CheckedChanged);
+            // 
+            // checkWantShiny
+            // 
+            this.checkWantShiny.AutoSize = true;
+            this.checkWantShiny.Checked = true;
+            this.checkWantShiny.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkWantShiny.Location = new System.Drawing.Point(119, 7);
+            this.checkWantShiny.Name = "checkWantShiny";
+            this.checkWantShiny.Size = new System.Drawing.Size(55, 19);
+            this.checkWantShiny.TabIndex = 11;
+            this.checkWantShiny.Text = "Shiny";
+            this.checkWantShiny.UseVisualStyleBackColor = true;
+            this.checkWantShiny.CheckedChanged += new System.EventHandler(this.checkWant_CheckedChanged);
             // 
             // buttonJSON
             // 
-            this.buttonJSON.Location = new System.Drawing.Point(517, 96);
+            this.buttonJSON.Location = new System.Drawing.Point(517, 125);
             this.buttonJSON.Name = "buttonJSON";
             this.buttonJSON.Size = new System.Drawing.Size(122, 23);
             this.buttonJSON.TabIndex = 1;
@@ -124,7 +190,7 @@
             // 
             // buttonPermutate
             // 
-            this.buttonPermutate.Location = new System.Drawing.Point(517, 125);
+            this.buttonPermutate.Location = new System.Drawing.Point(517, 160);
             this.buttonPermutate.Name = "buttonPermutate";
             this.buttonPermutate.Size = new System.Drawing.Size(122, 23);
             this.buttonPermutate.TabIndex = 6;
@@ -355,11 +421,32 @@
             this.openFileDialog1.DefaultExt = "json";
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panel4.Controls.Add(this.textBox4);
+            this.panel4.Location = new System.Drawing.Point(12, 213);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(644, 225);
+            this.panel4.TabIndex = 1;
+            // 
+            // textBox4
+            // 
+            this.textBox4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.textBox4.Location = new System.Drawing.Point(3, 3);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
+            this.textBox4.Size = new System.Drawing.Size(638, 23);
+            this.textBox4.TabIndex = 14;
+            this.textBox4.Text = "Found Pokémon:";
+            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(668, 450);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -368,12 +455,16 @@
             this.Text = "PermuteMMO";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns2)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns)).EndInit();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -406,5 +497,12 @@
         private TextBox textBoxBase;
         private Button buttonJSON;
         private OpenFileDialog openFileDialog1;
+        private Panel panel4;
+        private CheckBox checkWantAlpha;
+        private CheckBox checkWantShiny;
+        private Button button1;
+        private Panel panel5;
+        private TextBox textBox1;
+        private TextBox textBox4;
     }
 }

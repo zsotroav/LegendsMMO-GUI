@@ -13,6 +13,8 @@ namespace PermuteMMO.WinFormsApp
             // TODO: MOSpawner
             ApiPermuter.NoRes += NoRes;
             ApiPermuter.Done += Done;
+
+            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
         }
 
         private void checkBoxMMO_CheckedChanged(object sender, EventArgs e)
@@ -86,7 +88,6 @@ namespace PermuteMMO.WinFormsApp
             spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
 
             var spawn = spawner.GetSpawn();
-            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
             SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
             ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
         }
@@ -108,14 +109,14 @@ namespace PermuteMMO.WinFormsApp
             spawner.BonusTable = checkBoxMMO.Enabled ? textBoxBonus.Text : "0x0000000000000000";
 
             var spawn = spawner.GetSpawn();
-            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
             SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
             ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
         }
 
         private static void NoRes(string extra)
         {
-            MessageBox.Show($@"No results found{extra}\nThis means that your (M)MO will not have a shiny in any permutation.",
+            MessageBox.Show($@"No results found{extra}
+This means that your (M)MO will not have a desired pokemon any permutation.",
                 @"No results", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
@@ -161,6 +162,13 @@ namespace PermuteMMO.WinFormsApp
                 comboBoxSpecies.DisplayMember = "Text";
                 comboBoxSpecies.ValueMember = "Value";
             }
+        }
+
+        private void checkWant_CheckedChanged(object sender, EventArgs e)
+        {
+            PermuteMeta.SatisfyCriteria = (result, advances) => 
+                checkWantShiny.Checked ? result.IsShiny : !result.IsShiny && 
+                checkBoxAlpha.Checked ? result.IsAlpha : !result.IsAlpha;
         }
     }
 }
