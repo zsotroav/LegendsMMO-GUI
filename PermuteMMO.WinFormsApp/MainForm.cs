@@ -15,9 +15,26 @@ namespace PermuteMMO.WinFormsApp
             ApiPermuter.NoRes += NoRes;
             ApiPermuter.Done += Done;
 
-            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
+            comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
+            comboBoxSpecies.DisplayMember = "Text"; 
+            comboBoxSpecies.ValueMember = "Value";
         }
 
+        private void Criteria()
+        {
+            PermuteMeta.SatisfyCriteria = (result, advances) =>
+                (checkWantShiny.Checked ? result.IsShiny : !result.IsShiny) &&
+                (checkWantSquare.Checked ? (result.ShinyXor == 0 && result.IsShiny) : result.ShinyXor != 0) &&
+                (checkWantAlpha.Checked ? result.IsAlpha : !result.IsAlpha) &&
+                (comboWantGender.Text switch
+                {
+                    "M" => result.Gender == 0,
+                    "F" => result.Gender == 1,
+                    "/" => result.Gender == 2,
+                    _ => result.Gender != 9
+                });
+            SpawnGenerator.MaxShinyRolls = (int)numericWantMax.Value;
+        }
         private void checkBoxMMO_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxMMO.Checked)
@@ -26,6 +43,8 @@ namespace PermuteMMO.WinFormsApp
                 textBoxBase.Enabled = true;
                 textBoxBonus.Enabled = true;
                 //
+                numericWantMax.Maximum = 19;
+                numericWantMax.Value = 19;
                 comboBoxLoc.Enabled = true;
                 //checkBoxAlpha.Enabled = true;
                 //comboBoxSpecies2.Enabled = true;
@@ -64,6 +83,8 @@ namespace PermuteMMO.WinFormsApp
                 textBoxBase.Enabled = false;
                 textBoxBonus.Enabled = false;
                 //
+                numericWantMax.Maximum = 32;
+                numericWantMax.Value = 32;
                 comboBoxLoc.Enabled = false;
                 checkBoxAlpha.Enabled = false;
                 checkBoxAlpha.Checked = false;
@@ -89,8 +110,8 @@ namespace PermuteMMO.WinFormsApp
             spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
 
             var spawn = spawner.GetSpawn();
-            SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
             panelFound.Controls.Clear();
+            Criteria();
             ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
         }
 
@@ -106,20 +127,20 @@ namespace PermuteMMO.WinFormsApp
             spawner.Seed = textBoxSeed.Text;
             spawner.Species = (ushort)PKHeX.Core.SpeciesName.GetSpeciesID((string)comboBoxSpecies.SelectedValue);
             spawner.BaseCount = (int)numericSpawns.Value;
-            spawner.BaseTable = checkBoxMMO.Enabled ? textBoxBase.Text : "0x0000000000000000";
+            spawner.BaseTable = checkBoxMMO.Checked ? textBoxBase.Text : "0x0000000000000000";
             spawner.BonusCount = (int)numericSpawns2.Value;
-            spawner.BonusTable = checkBoxMMO.Enabled ? textBoxBonus.Text : "0x0000000000000000";
+            spawner.BonusTable = checkBoxMMO.Checked ? textBoxBonus.Text : "0x0000000000000000";
 
             var spawn = spawner.GetSpawn();
-            SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
             panelFound.Controls.Clear();
+            Criteria();
             ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
         }
 
         private static void NoRes(string extra)
         {
             MessageBox.Show($@"No results found{extra}
-This means that your (M)MO will not have a desired pokemon any permutation.",
+This means that you will not have a desired pokemon in any permutation. Try changing the wanted pokemon criteria.",
                 @"No results", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
@@ -165,13 +186,6 @@ This means that your (M)MO will not have a desired pokemon any permutation.",
                 comboBoxSpecies.DisplayMember = "Text";
                 comboBoxSpecies.ValueMember = "Value";
             }
-        }
-
-        private void checkWant_CheckedChanged(object sender, EventArgs e)
-        {
-            PermuteMeta.SatisfyCriteria = (result, advances) => 
-                checkWantShiny.Checked ? result.IsShiny : !result.IsShiny && 
-                checkBoxAlpha.Checked ? result.IsAlpha : !result.IsAlpha;
         }
         
         private void Result(PermuteResult permute, EntityResult entity)
@@ -255,12 +269,23 @@ This means that your (M)MO will not have a desired pokemon any permutation.",
                 ad.ReadOnly = true;
                 ad.TextAlign = HorizontalAlignment.Center;
                 ad.Size = new Size(23, 23);
-                ad.Location = new Point(i * 27 + 4, 4);
+                ad.Location = new Point(i * 27 + 8, 4);
                 ad.Text = advance.ToString();
                 pan.Controls.Add(ad);
                 i++;
             }
             panelFound.Controls.Add(pan);
+        }
+
+        private void checkWantSquare_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkWantSquare.Checked)
+            {
+                checkWantShiny.Checked = true;
+                checkWantShiny.Enabled = false;
+            }
+            else
+                checkWantShiny.Enabled = true;
         }
     }
 }

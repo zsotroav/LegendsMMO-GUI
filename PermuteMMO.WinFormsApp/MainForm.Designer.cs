@@ -30,6 +30,11 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.numericWantMax = new System.Windows.Forms.NumericUpDown();
+            this.comboWantGender = new System.Windows.Forms.ComboBox();
+            this.checkWantSquare = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.checkWantAlpha = new System.Windows.Forms.CheckBox();
@@ -64,6 +69,7 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericWantMax)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns2)).BeginInit();
             this.panel2.SuspendLayout();
@@ -94,14 +100,79 @@
             // panel5
             // 
             this.panel5.BackColor = System.Drawing.SystemColors.Control;
+            this.panel5.Controls.Add(this.label9);
+            this.panel5.Controls.Add(this.label8);
+            this.panel5.Controls.Add(this.numericWantMax);
+            this.panel5.Controls.Add(this.comboWantGender);
+            this.panel5.Controls.Add(this.checkWantSquare);
             this.panel5.Controls.Add(this.textBox1);
             this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.checkWantAlpha);
             this.panel5.Controls.Add(this.checkWantShiny);
             this.panel5.Location = new System.Drawing.Point(3, 157);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(508, 31);
+            this.panel5.Size = new System.Drawing.Size(636, 31);
             this.panel5.TabIndex = 5;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(311, 7);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 15);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Gender:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(426, 8);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(58, 15);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Max rolls:";
+            // 
+            // numericWantMax
+            // 
+            this.numericWantMax.Location = new System.Drawing.Point(490, 5);
+            this.numericWantMax.Maximum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.numericWantMax.Name = "numericWantMax";
+            this.numericWantMax.Size = new System.Drawing.Size(50, 23);
+            this.numericWantMax.TabIndex = 16;
+            this.numericWantMax.Value = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            // 
+            // comboWantGender
+            // 
+            this.comboWantGender.FormattingEnabled = true;
+            this.comboWantGender.Items.AddRange(new object[] {
+            "ANY",
+            "M",
+            "F",
+            "/"});
+            this.comboWantGender.Location = new System.Drawing.Point(365, 4);
+            this.comboWantGender.Name = "comboWantGender";
+            this.comboWantGender.Size = new System.Drawing.Size(55, 23);
+            this.comboWantGender.TabIndex = 15;
+            this.comboWantGender.Text = "ANY";
+            // 
+            // checkWantSquare
+            // 
+            this.checkWantSquare.AutoSize = true;
+            this.checkWantSquare.Location = new System.Drawing.Point(180, 6);
+            this.checkWantSquare.Name = "checkWantSquare";
+            this.checkWantSquare.Size = new System.Drawing.Size(62, 19);
+            this.checkWantSquare.TabIndex = 14;
+            this.checkWantSquare.Text = "Square";
+            this.checkWantSquare.UseVisualStyleBackColor = true;
+            this.checkWantSquare.CheckedChanged += new System.EventHandler(this.checkWantSquare_CheckedChanged);
             // 
             // textBox1
             // 
@@ -116,40 +187,40 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(257, 3);
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(598, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(113, 23);
+            this.button1.Size = new System.Drawing.Size(34, 23);
             this.button1.TabIndex = 13;
-            this.button1.Text = "Advanced...";
+            this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             // 
             // checkWantAlpha
             // 
             this.checkWantAlpha.AutoSize = true;
-            this.checkWantAlpha.Location = new System.Drawing.Point(180, 7);
+            this.checkWantAlpha.Location = new System.Drawing.Point(248, 6);
             this.checkWantAlpha.Name = "checkWantAlpha";
             this.checkWantAlpha.Size = new System.Drawing.Size(57, 19);
             this.checkWantAlpha.TabIndex = 12;
             this.checkWantAlpha.Text = "Alpha";
             this.checkWantAlpha.UseVisualStyleBackColor = true;
-            this.checkWantAlpha.CheckedChanged += new System.EventHandler(this.checkWant_CheckedChanged);
             // 
             // checkWantShiny
             // 
             this.checkWantShiny.AutoSize = true;
             this.checkWantShiny.Checked = true;
             this.checkWantShiny.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkWantShiny.Location = new System.Drawing.Point(119, 7);
+            this.checkWantShiny.Location = new System.Drawing.Point(119, 6);
             this.checkWantShiny.Name = "checkWantShiny";
             this.checkWantShiny.Size = new System.Drawing.Size(55, 19);
             this.checkWantShiny.TabIndex = 11;
             this.checkWantShiny.Text = "Shiny";
             this.checkWantShiny.UseVisualStyleBackColor = true;
-            this.checkWantShiny.CheckedChanged += new System.EventHandler(this.checkWant_CheckedChanged);
             // 
             // buttonJSON
             // 
-            this.buttonJSON.Location = new System.Drawing.Point(517, 125);
+            this.buttonJSON.Location = new System.Drawing.Point(517, 95);
             this.buttonJSON.Name = "buttonJSON";
             this.buttonJSON.Size = new System.Drawing.Size(122, 23);
             this.buttonJSON.TabIndex = 1;
@@ -191,7 +262,7 @@
             // 
             // buttonPermutate
             // 
-            this.buttonPermutate.Location = new System.Drawing.Point(517, 160);
+            this.buttonPermutate.Location = new System.Drawing.Point(517, 125);
             this.buttonPermutate.Name = "buttonPermutate";
             this.buttonPermutate.Size = new System.Drawing.Size(122, 23);
             this.buttonPermutate.TabIndex = 6;
@@ -367,7 +438,6 @@
             this.comboBoxSpecies.Name = "comboBoxSpecies";
             this.comboBoxSpecies.Size = new System.Drawing.Size(129, 23);
             this.comboBoxSpecies.TabIndex = 1;
-            this.comboBoxSpecies.ValueMember = "Value";
             // 
             // label1
             // 
@@ -465,6 +535,7 @@
             this.panel1.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericWantMax)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns2)).EndInit();
@@ -513,5 +584,10 @@
         private TextBox textBox1;
         private TextBox textBox4;
         private Panel panelFound;
+        private CheckBox checkWantSquare;
+        private ComboBox comboWantGender;
+        private Label label9;
+        private Label label8;
+        private NumericUpDown numericWantMax;
     }
 }
