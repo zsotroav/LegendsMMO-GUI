@@ -248,6 +248,10 @@
             this.comboBoxSpecies.Name = "comboBoxSpecies";
             this.comboBoxSpecies.Size = new System.Drawing.Size(129, 23);
             this.comboBoxSpecies.TabIndex = 1;
+            comboBoxSpecies.DataSource = null;
+            comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
+            comboBoxSpecies.DisplayMember = "Text";
+            comboBoxSpecies.ValueMember = "Value";
             // 
             // label1
             // 

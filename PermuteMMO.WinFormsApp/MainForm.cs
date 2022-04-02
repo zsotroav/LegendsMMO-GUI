@@ -22,6 +22,33 @@ namespace PermuteMMO.WinFormsApp
                 checkBoxAlpha.Enabled = true;
                 comboBoxSpecies2.Enabled = true;
                 numericSpawns2.Enabled = true;
+
+                var x = comboBoxLoc.Text switch
+                {
+                    "Crimson Mirelands" => PokemonLocationUtil.CrimsonMirelandsAPokemon,
+                    "Cobalt Coastlands" => PokemonLocationUtil.CobaltCoastlandsAPokemon,
+                    "Coronet Highlands" => PokemonLocationUtil.CoronetHighlandsAPokemon,
+                    "Alabaster Icelands" => PokemonLocationUtil.AlabasterIcelandsAPokemon,
+                    _ => PokemonLocationUtil.ObsidianFieldlandsAPokemon
+                };
+                comboBoxSpecies.DataSource = null;
+                comboBoxSpecies.DataSource = new BindingSource(x, null);
+                comboBoxSpecies.DisplayMember = "Text";
+                comboBoxSpecies.ValueMember = "Value";
+
+                x = comboBoxLoc.Text switch
+                {
+                    "Crimson Mirelands" => PokemonLocationUtil.CrimsonMirelandsBPokemon,
+                    "Cobalt Coastlands" => PokemonLocationUtil.CobaltCoastlandsBPokemon,
+                    "Coronet Highlands" => PokemonLocationUtil.CoronetHighlandsBPokemon,
+                    "Alabaster Icelands" => PokemonLocationUtil.AlabasterIcelandsBPokemon,
+                    _ => PokemonLocationUtil.ObsidianFieldlandsBPokemon
+                };
+                comboBoxSpecies2.DataSource = null;
+                comboBoxSpecies2.DataSource = new BindingSource(x, null);
+                comboBoxSpecies2.DisplayMember = "Text";
+                comboBoxSpecies2.ValueMember = "Value";
+
             }
             else
             {
@@ -31,6 +58,12 @@ namespace PermuteMMO.WinFormsApp
                 comboBoxSpecies2.Text = "";
                 numericSpawns2.Enabled = false;
                 numericSpawns2.Value = 0;
+
+                comboBoxSpecies2.DataSource = null;
+                comboBoxSpecies.DataSource = null;
+                comboBoxSpecies.DataSource = new BindingSource(PokemonLocationUtil.Pokemon, null);
+                comboBoxSpecies.DisplayMember = "Text";
+                comboBoxSpecies.ValueMember = "Value";
             }
         }
 
@@ -44,13 +77,16 @@ namespace PermuteMMO.WinFormsApp
                 return;
             }
             spawner.Seed = textBoxSeed.Text;
-            spawner.Species = 0;
+            spawner.Species = (ushort)PKHeX.Core.SpeciesName.GetSpeciesID((string)comboBoxSpecies.SelectedValue);
             spawner.BaseCount = (int)numericSpawns.Value;
-            spawner.BaseTable = "";
+            spawner.BaseTable = "0x0000000000000000";
             spawner.BonusCount = (int)numericSpawns2.Value;
-            spawner.BonusTable = "";
+            spawner.BonusTable = "0x0000000000000000";
 
-            ApiPermuter.PermuteSingle(spawner.GetSpawn(), spawner.GetSeed(), spawner.Species);
+            var spawn = spawner.GetSpawn();
+            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
+            SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
+            ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
         }
 
         private static void NoRes(string extra)
