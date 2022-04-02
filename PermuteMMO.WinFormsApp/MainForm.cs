@@ -4,11 +4,11 @@ namespace PermuteMMO.WinFormsApp
 {
     public partial class MainForm : Form
     {
+
         public UserEnteredSpawnInfo spawner = new();
         public MainForm()
         {
             InitializeComponent();
-            // TODO: Message
             // TODO: MMOSpawner
             // TODO: MOSpawner
             ApiPermuter.NoRes += NoRes;
@@ -19,9 +19,13 @@ namespace PermuteMMO.WinFormsApp
         {
             if (checkBoxMMO.Checked)
             {
+                textBoxWarn.ForeColor = Color.DarkRed;
+                textBoxBase.Enabled = true;
+                textBoxBonus.Enabled = true;
+                //
                 comboBoxLoc.Enabled = true;
-                checkBoxAlpha.Enabled = true;
-                comboBoxSpecies2.Enabled = true;
+                //checkBoxAlpha.Enabled = true;
+                //comboBoxSpecies2.Enabled = true;
                 numericSpawns2.Enabled = true;
 
                 var x = comboBoxLoc.Text switch
@@ -53,6 +57,10 @@ namespace PermuteMMO.WinFormsApp
             }
             else
             {
+                textBoxWarn.ForeColor = SystemColors.Control;
+                textBoxBase.Enabled = false;
+                textBoxBonus.Enabled = false;
+                //
                 comboBoxLoc.Enabled = false;
                 checkBoxAlpha.Enabled = false;
                 checkBoxAlpha.Checked = false;
@@ -69,6 +77,20 @@ namespace PermuteMMO.WinFormsApp
             }
         }
 
+        private void buttonJSON_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            var json = openFileDialog1.FileName;
+            if (string.IsNullOrEmpty(json) || !File.Exists(json)) return;
+
+            spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
+
+            var spawn = spawner.GetSpawn();
+            PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
+            SpawnGenerator.MaxShinyRolls = spawn.Type is SpawnType.MMO ? 19 : 32;
+            ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
+        }
+
         private void buttonPermutate_Click(object sender, EventArgs e)
         {
             // Sanity check
@@ -81,9 +103,9 @@ namespace PermuteMMO.WinFormsApp
             spawner.Seed = textBoxSeed.Text;
             spawner.Species = (ushort)PKHeX.Core.SpeciesName.GetSpeciesID((string)comboBoxSpecies.SelectedValue);
             spawner.BaseCount = (int)numericSpawns.Value;
-            spawner.BaseTable = "0x0000000000000000";
+            spawner.BaseTable = checkBoxMMO.Enabled ? textBoxBase.Text : "0x0000000000000000";
             spawner.BonusCount = (int)numericSpawns2.Value;
-            spawner.BonusTable = "0x0000000000000000";
+            spawner.BonusTable = checkBoxMMO.Enabled ? textBoxBonus.Text : "0x0000000000000000";
 
             var spawn = spawner.GetSpawn();
             PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;

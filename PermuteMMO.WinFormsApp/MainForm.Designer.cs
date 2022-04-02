@@ -28,12 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonJSON = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.textBoxWarn = new System.Windows.Forms.TextBox();
             this.buttonPermutate = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.textBoxBonus = new System.Windows.Forms.TextBox();
+            this.textBoxBase = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBoxAlpha = new System.Windows.Forms.CheckBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -50,6 +53,7 @@
             this.comboBoxLoc = new System.Windows.Forms.ComboBox();
             this.textBoxSeed = new System.Windows.Forms.TextBox();
             this.checkBoxMMO = new System.Windows.Forms.CheckBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns2)).BeginInit();
@@ -61,8 +65,10 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.buttonJSON);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.textBoxWarn);
             this.panel1.Controls.Add(this.buttonPermutate);
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.panel2);
@@ -73,6 +79,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(644, 160);
             this.panel1.TabIndex = 0;
+            // 
+            // buttonJSON
+            // 
+            this.buttonJSON.Location = new System.Drawing.Point(517, 96);
+            this.buttonJSON.Name = "buttonJSON";
+            this.buttonJSON.Size = new System.Drawing.Size(122, 23);
+            this.buttonJSON.TabIndex = 1;
+            this.buttonJSON.Text = "Use JSON data";
+            this.buttonJSON.UseVisualStyleBackColor = true;
+            this.buttonJSON.Click += new System.EventHandler(this.buttonJSON_Click);
             // 
             // label7
             // 
@@ -92,6 +108,20 @@
             this.label6.TabIndex = 7;
             this.label6.Text = "Outbreak location:";
             // 
+            // textBoxWarn
+            // 
+            this.textBoxWarn.BackColor = System.Drawing.SystemColors.Control;
+            this.textBoxWarn.ForeColor = System.Drawing.SystemColors.Control;
+            this.textBoxWarn.Location = new System.Drawing.Point(517, 3);
+            this.textBoxWarn.Multiline = true;
+            this.textBoxWarn.Name = "textBoxWarn";
+            this.textBoxWarn.ReadOnly = true;
+            this.textBoxWarn.Size = new System.Drawing.Size(122, 89);
+            this.textBoxWarn.TabIndex = 9;
+            this.textBoxWarn.Text = "MMOs currently not fully operational in GUI mode. Use the website to get the spaw" +
+    "n tables.";
+            this.textBoxWarn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // buttonPermutate
             // 
             this.buttonPermutate.Location = new System.Drawing.Point(517, 125);
@@ -105,6 +135,8 @@
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.SystemColors.Control;
+            this.panel3.Controls.Add(this.textBoxBonus);
+            this.panel3.Controls.Add(this.textBoxBase);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.checkBoxAlpha);
             this.panel3.Controls.Add(this.textBox3);
@@ -116,6 +148,24 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(251, 123);
             this.panel3.TabIndex = 5;
+            // 
+            // textBoxBonus
+            // 
+            this.textBoxBonus.Enabled = false;
+            this.textBoxBonus.Location = new System.Drawing.Point(3, 68);
+            this.textBoxBonus.Name = "textBoxBonus";
+            this.textBoxBonus.PlaceholderText = "Bonus Table";
+            this.textBoxBonus.Size = new System.Drawing.Size(245, 23);
+            this.textBoxBonus.TabIndex = 11;
+            // 
+            // textBoxBase
+            // 
+            this.textBoxBase.Enabled = false;
+            this.textBoxBase.Location = new System.Drawing.Point(3, 39);
+            this.textBoxBase.Name = "textBoxBase";
+            this.textBoxBase.PlaceholderText = "Base Table";
+            this.textBoxBase.Size = new System.Drawing.Size(245, 23);
+            this.textBoxBase.TabIndex = 10;
             // 
             // label5
             // 
@@ -300,6 +350,11 @@
             this.checkBoxMMO.UseVisualStyleBackColor = true;
             this.checkBoxMMO.CheckedChanged += new System.EventHandler(this.checkBoxMMO_CheckedChanged);
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "json";
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -346,5 +401,10 @@
         private Button buttonPermutate;
         private Label label7;
         private Label label6;
+        private TextBox textBoxWarn;
+        private TextBox textBoxBonus;
+        private TextBox textBoxBase;
+        private Button buttonJSON;
+        private OpenFileDialog openFileDialog1;
     }
 }
