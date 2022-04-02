@@ -60,6 +60,7 @@
             this.checkBoxMMO = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.panelFound = new System.Windows.Forms.Panel();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -345,7 +346,7 @@
             0,
             0});
             this.numericSpawns.Minimum = new decimal(new int[] {
-            10,
+            8,
             0,
             0,
             0});
@@ -366,9 +367,6 @@
             this.comboBoxSpecies.Name = "comboBoxSpecies";
             this.comboBoxSpecies.Size = new System.Drawing.Size(129, 23);
             this.comboBoxSpecies.TabIndex = 1;
-            this.comboBoxSpecies.DataSource = null;
-            this.comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
-            this.comboBoxSpecies.DisplayMember = "Text";
             this.comboBoxSpecies.ValueMember = "Value";
             // 
             // label1
@@ -424,11 +422,21 @@
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panel4.Controls.Add(this.panelFound);
             this.panel4.Controls.Add(this.textBox4);
             this.panel4.Location = new System.Drawing.Point(12, 213);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(644, 225);
             this.panel4.TabIndex = 1;
+            // 
+            // panelFound
+            // 
+            this.panelFound.AutoScroll = true;
+            this.panelFound.BackColor = System.Drawing.SystemColors.Control;
+            this.panelFound.Location = new System.Drawing.Point(3, 32);
+            this.panelFound.Name = "panelFound";
+            this.panelFound.Size = new System.Drawing.Size(638, 190);
+            this.panelFound.TabIndex = 15;
             // 
             // textBox4
             // 
@@ -504,5 +512,6 @@
         private Panel panel5;
         private TextBox textBox1;
         private TextBox textBox4;
+        private Panel panelFound;
     }
 }
