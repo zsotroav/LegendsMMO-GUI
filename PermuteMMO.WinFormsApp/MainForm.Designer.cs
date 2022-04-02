@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -243,15 +244,16 @@
             // 
             // comboBoxSpecies
             // 
+            this.comboBoxSpecies.DisplayMember = "Text";
             this.comboBoxSpecies.FormattingEnabled = true;
             this.comboBoxSpecies.Location = new System.Drawing.Point(119, 35);
             this.comboBoxSpecies.Name = "comboBoxSpecies";
             this.comboBoxSpecies.Size = new System.Drawing.Size(129, 23);
             this.comboBoxSpecies.TabIndex = 1;
-            comboBoxSpecies.DataSource = null;
-            comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
-            comboBoxSpecies.DisplayMember = "Text";
-            comboBoxSpecies.ValueMember = "Value";
+            this.comboBoxSpecies.DataSource = null;
+            this.comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
+            this.comboBoxSpecies.DisplayMember = "Text";
+            this.comboBoxSpecies.ValueMember = "Value";
             // 
             // label1
             // 
@@ -264,6 +266,7 @@
             // 
             // comboBoxLoc
             // 
+            this.comboBoxLoc.Enabled = false;
             this.comboBoxLoc.FormattingEnabled = true;
             this.comboBoxLoc.Items.AddRange(new object[] {
             "Obsidian Fieldlands",
@@ -276,6 +279,7 @@
             this.comboBoxLoc.Size = new System.Drawing.Size(129, 23);
             this.comboBoxLoc.TabIndex = 2;
             this.comboBoxLoc.Text = "Obsidian Fieldlands";
+            this.comboBoxLoc.SelectedIndexChanged += new System.EventHandler(this.comboBoxLoc_SelectedIndexChanged);
             // 
             // textBoxSeed
             // 

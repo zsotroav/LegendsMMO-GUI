@@ -19,6 +19,7 @@ namespace PermuteMMO.WinFormsApp
         {
             if (checkBoxMMO.Checked)
             {
+                comboBoxLoc.Enabled = true;
                 checkBoxAlpha.Enabled = true;
                 comboBoxSpecies2.Enabled = true;
                 numericSpawns2.Enabled = true;
@@ -52,6 +53,7 @@ namespace PermuteMMO.WinFormsApp
             }
             else
             {
+                comboBoxLoc.Enabled = false;
                 checkBoxAlpha.Enabled = false;
                 checkBoxAlpha.Checked = false;
                 comboBoxSpecies2.Enabled = false;
@@ -98,6 +100,45 @@ namespace PermuteMMO.WinFormsApp
         private static void Done(string extra)
         {
             MessageBox.Show($@"Done permutating{extra}", @"Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        }
+
+        private void comboBoxLoc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (checkBoxMMO.Checked)
+            {
+                var x = comboBoxLoc.Text switch
+                {
+                    "Crimson Mirelands" => PokemonLocationUtil.CrimsonMirelandsAPokemon,
+                    "Cobalt Coastlands" => PokemonLocationUtil.CobaltCoastlandsAPokemon,
+                    "Coronet Highlands" => PokemonLocationUtil.CoronetHighlandsAPokemon,
+                    "Alabaster Icelands" => PokemonLocationUtil.AlabasterIcelandsAPokemon,
+                    _ => PokemonLocationUtil.ObsidianFieldlandsAPokemon
+                };
+                comboBoxSpecies.DataSource = null;
+                comboBoxSpecies.DataSource = new BindingSource(x, null);
+                comboBoxSpecies.DisplayMember = "Text";
+                comboBoxSpecies.ValueMember = "Value";
+                x = comboBoxLoc.Text switch
+                {
+                    "Crimson Mirelands" => PokemonLocationUtil.CrimsonMirelandsBPokemon,
+                    "Cobalt Coastlands" => PokemonLocationUtil.CobaltCoastlandsBPokemon,
+                    "Coronet Highlands" => PokemonLocationUtil.CoronetHighlandsBPokemon,
+                    "Alabaster Icelands" => PokemonLocationUtil.AlabasterIcelandsBPokemon,
+                    _ => PokemonLocationUtil.ObsidianFieldlandsBPokemon
+                };
+                comboBoxSpecies2.DataSource = null;
+                comboBoxSpecies2.DataSource = new BindingSource(x, null);
+                comboBoxSpecies2.DisplayMember = "Text";
+                comboBoxSpecies2.ValueMember = "Value";
+            }
+            else
+            {
+                comboBoxSpecies2.DataSource = null;
+                comboBoxSpecies.DataSource = null;
+                comboBoxSpecies.DataSource = new BindingSource(PokemonLocationUtil.Pokemon, null);
+                comboBoxSpecies.DisplayMember = "Text";
+                comboBoxSpecies.ValueMember = "Value";
+            }
         }
     }
 }
