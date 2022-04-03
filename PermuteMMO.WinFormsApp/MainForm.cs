@@ -240,6 +240,12 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         }
     }
 
+    private static void ResultClick(object sender, EventArgs e, PermuteResult permute, EntityResult entity)
+    {
+        var form = new DetailsForm(permute, entity);
+        form.Show();
+    }
+
     private void Result(PermuteResult permute, EntityResult entity)
     {
         // Container Panel
@@ -251,7 +257,9 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         };
 
         // Name
-        pan.Controls.Add(GenBox(3, 0, entity.Name));
+        var name = GenBox(3, 0, entity.Name);
+        name.Click += (sender, e) => ResultClick(sender, e, permute, entity);
+        pan.Controls.Add(name);
 
         // Spawn
         pan.Controls.Add(GenBox(2,3, (permute.IsBonus ? "BS" : "SP") + permute.SpawnIndex));
@@ -278,7 +286,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         pan.Controls.Add(GenBox(1,7, entity.IsShiny ? entity.RollCountUsed.ToString() : "-"));
 
         // Shiny XOR
-        pan.Controls.Add(GenBox(1,8, entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "*" : "-"));
+        pan.Controls.Add(GenBox(1,8, entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "\u2606" : "-"));
 
         // Steps
         var i = 9;
