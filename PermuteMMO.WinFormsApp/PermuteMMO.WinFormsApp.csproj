@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PermuteMMO.Lib\PermuteMMO.Lib.csproj" />
+    <ProjectReference Include="..\EtumrepMMO-Lib\EtumrepMMO.Lib\EtumrepMMO.Lib.csproj" />
   </ItemGroup>
   
 </Project>

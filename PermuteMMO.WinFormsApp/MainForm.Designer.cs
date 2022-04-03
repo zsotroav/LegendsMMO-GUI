@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonEtumrep = new System.Windows.Forms.Button();
             this.checkBoxMMO = new System.Windows.Forms.CheckBox();
             this.panel5 = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
@@ -63,10 +64,11 @@
             this.comboBoxSpecies = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxSeed = new System.Windows.Forms.TextBox();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panelFound = new System.Windows.Forms.Panel();
             this.textBox4 = new System.Windows.Forms.TextBox();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericWantMax)).BeginInit();
@@ -81,6 +83,7 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.buttonEtumrep);
             this.panel1.Controls.Add(this.checkBoxMMO);
             this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.buttonJSON);
@@ -94,6 +97,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(644, 195);
             this.panel1.TabIndex = 0;
+            // 
+            // buttonEtumrep
+            // 
+            this.buttonEtumrep.Location = new System.Drawing.Point(209, 6);
+            this.buttonEtumrep.Name = "buttonEtumrep";
+            this.buttonEtumrep.Size = new System.Drawing.Size(45, 23);
+            this.buttonEtumrep.TabIndex = 10;
+            this.buttonEtumrep.Text = "FIND";
+            this.buttonEtumrep.UseVisualStyleBackColor = true;
+            this.buttonEtumrep.Click += new System.EventHandler(this.buttonEtumrep_Click);
             // 
             // checkBoxMMO
             // 
@@ -485,13 +498,13 @@
             this.textBoxSeed.Location = new System.Drawing.Point(50, 6);
             this.textBoxSeed.Name = "textBoxSeed";
             this.textBoxSeed.PlaceholderText = "16045686375800883966";
-            this.textBoxSeed.Size = new System.Drawing.Size(204, 23);
+            this.textBoxSeed.Size = new System.Drawing.Size(153, 23);
             this.textBoxSeed.TabIndex = 1;
             // 
-            // openFileDialog1
+            // openFileDialog
             // 
-            this.openFileDialog1.DefaultExt = "json";
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog.DefaultExt = "json";
+            this.openFileDialog.FileName = "openFileDialog1";
             // 
             // panel4
             // 
@@ -522,7 +535,7 @@
             this.textBox4.TabIndex = 14;
             this.textBox4.Text = "Found Pokémon:";
             this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
+            //
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -579,7 +592,7 @@
         private TextBox textBoxBonus;
         private TextBox textBoxBase;
         private Button buttonJSON;
-        private OpenFileDialog openFileDialog1;
+        private OpenFileDialog openFileDialog;
         private Panel panel4;
         private CheckBox checkWantAlpha;
         private CheckBox checkWantShiny;
@@ -593,5 +606,7 @@
         private Label label9;
         private Label label8;
         private NumericUpDown numericWantMax;
+        private Button buttonEtumrep;
+        private FolderBrowserDialog folderBrowserDialog;
     }
 }

@@ -1,4 +1,6 @@
 using PermuteMMO.Lib;
+using EtumrepMMO.Lib;
+using System.Threading;
 
 namespace PermuteMMO.WinFormsApp;
 
@@ -18,6 +20,55 @@ public partial class MainForm : Form
         comboBoxSpecies.DisplayMember = "Text";
         comboBoxSpecies.ValueMember = "Value";
     }
+
+    #region Etumrep
+
+    private void buttonEtumrep_Click(object sender, EventArgs e)
+    {
+        folderBrowserDialog.ShowDialog();
+        if (string.IsNullOrEmpty(folderBrowserDialog.SelectedPath)) return;
+
+        var inputs = GroupSeedFinder.GetInputs(folderBrowserDialog.SelectedPath);
+        if (inputs.Count < 2)
+        {
+            MessageBox.Show(@"Insufficient inputs found in folder. 
+Two (2) or more dumped files are required, four (4) recommended.", @"Error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            return;
+        }
+        var t = new Thread(() => SeedThreaded(inputs));
+        t.Start();
+        MessageBox.Show(@"Started looking for a seed. 
+This may take a while...", @"Started seed thread", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void SeedThreaded(IReadOnlyList<PKHeX.Core.PKM> inputs)
+    {
+        var result = GroupSeedFinder.FindSeed(inputs);
+        if (result is default(ulong))
+        {
+            MessageBox.Show(
+                $@"No group seeds found with the input data. Double check your inputs (valid inputs: {inputs.Count}).",
+                @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        else
+        {
+            SetSeed(result.ToString());
+            MessageBox.Show($@"Found seed! ({result})", @"Seed found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+    private void SetSeed(string seed)
+    {
+        if (InvokeRequired)
+        {
+            Invoke(new Action<string>(SetSeed), seed);
+            return;
+        }
+        textBoxSeed.Text += seed;
+    }
+
+    #endregion
 
     private void Criteria()
     {
@@ -103,8 +154,8 @@ public partial class MainForm : Form
 
     private void buttonJSON_Click(object sender, EventArgs e)
     {
-        openFileDialog1.ShowDialog();
-        var json = openFileDialog1.FileName;
+        openFileDialog.ShowDialog();
+        var json = openFileDialog.FileName;
         if (string.IsNullOrEmpty(json) || !File.Exists(json)) return;
 
         spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
