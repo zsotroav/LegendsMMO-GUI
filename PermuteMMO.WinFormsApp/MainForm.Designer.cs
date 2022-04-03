@@ -535,7 +535,7 @@
             this.textBox4.TabIndex = 14;
             this.textBox4.Text = "Found Pokémon:";
             this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            //
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -547,7 +547,7 @@
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "PermuteMMO";
+            this.Text = "Legends outbreak RNG: Permute and Etumrep (M)MO";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel5.ResumeLayout(false);
