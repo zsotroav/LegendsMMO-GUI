@@ -192,10 +192,12 @@ This means that you will not have a desired pokemon in any permutation. Try chan
     private void Result(PermuteResult permute, EntityResult entity)
     {
         // Container Panel
-        var pan = new Panel();
-        pan.Location = new Point(3, panelFound.Controls.Count * 36 + 5);
-        pan.Size = new Size(600, 31);
-        pan.BackColor = SystemColors.ControlLight;
+        var pan = new Panel
+        {
+            Location = new Point(3, panelFound.Controls.Count * 36 + 5),
+            Size = new Size(602, 31),
+            BackColor = SystemColors.ControlLight
+        };
 
         // Name
         pan.Controls.Add(GenBox(3, 0, entity.Name));
@@ -209,12 +211,12 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             {
                 2 => "/",
                 1 => "F",
-                _ => "M",
+                _ => "M"
             }, entity.Gender switch
             {
                 2 => SystemColors.Control,
                 1 => Color.FromArgb(255, 186, 225),
-                _ => Color.FromArgb(186, 225, 255),
+                _ => Color.FromArgb(186, 225, 255)
             }));
 
         // Alpha
@@ -231,16 +233,22 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         var i = 9;
         foreach (var advance in permute.Advances)
         {
-            var ad = GenBox(1, i, advance.ToString());
-            ad.BackColor = advance switch
-            {
-                Advance.A1 => Color.FromArgb(186, 255, 201),
-                Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
-                Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
-                _ => SystemColors.Control
-            };
-            pan.Controls.Add(ad);
+            pan.Controls.Add(GenBox(1, i, advance.ToString(),
+                advance switch
+                {
+                    Advance.A1 => Color.FromArgb(186, 255, 201),
+                    Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
+                    Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
+                    _ => SystemColors.Control
+                }));
             i++;
+        }
+
+        // Timid warning
+        if (BehaviorUtil.Timid.Contains(entity.Species))
+        {
+            var multi = permute.Advances.Any(advance => advance.IsMulti());
+            pan.Controls.Add(GenBox(3, i, "TIMID" + (multi ? " MULTI" : ""), Color.FromArgb(255, 80, 72)));
         }
 
         panelFound.Controls.Add(pan);
