@@ -31,9 +31,10 @@ public sealed class EntityResult
     public byte Height { get; set; }
     public byte Weight { get; set; }
 
-    public bool IsTimid => BehaviorUtil.Timid.Contains(Species);
+    public bool IsSkittish => BehaviorUtil.Skittish.Contains(Species);
+    public bool IsAggressive => IsAlpha || !IsSkittish;
 
-    public string GetSummary(ushort species, ReadOnlySpan<Advance> advances)
+    public string GetSummary(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
         var shiny = IsShiny ? $" {RollCountUsed,2} {(ShinyXor == 0 ? '■' : '*')}" : "";
         var ivs = $" {IVs[0]:00}/{IVs[1]:00}/{IVs[2]:00}/{IVs[3]:00}/{IVs[4]:00}/{IVs[5]:00}";
@@ -46,22 +47,42 @@ public sealed class EntityResult
             1 => " (F)",
             _ => " (M)",
         };
-        var timid = GetTimidString(species, advances);
-        return $"{alpha}{Name}{gender}:{shiny}{ivs}{nature,-8}{notAlpha}{timid}";
+        var feasibility = GetFeasibility(advances, skittishBase, skittishBonus);
+        return $"{alpha}{Name}{gender}:{shiny}{ivs}{nature,-8}{notAlpha}{feasibility}";
     }
 
-    private string GetTimidString(ushort species, ReadOnlySpan<Advance> advances)
+    private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
-        var baseTimid = BehaviorUtil.Timid.Contains(species);
-        if (!baseTimid)
+        if (!advances.IsAnyMulti())
+            return " -- Single advances!";
+
+        if (!skittishBase && !skittishBonus)
             return string.Empty;
 
-        var anyMulti = advances.IsAnyMulti();
-        if (anyMulti)
-            return " -- Timid, multi :(";
+        bool skittishMulti = false;
+        int bonusIndex = GetBonusStartIndex(advances);
+        if (bonusIndex != -1)
+        {
+            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
+            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
+        }
+        else
+        {
+            skittishMulti |= skittishBase && advances.IsAnyMulti();
+        }
 
-        if (IsTimid)
-            return " -- TIMID, NOT MULTI";
-        return " -- Base encounter Timid, NOT MULTI.";
+        if (skittishMulti)
+            return " -- Skittish: Aggressive!";
+        return     " -- Skittish: Single advances!";
+    }
+
+    public static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)
+    {
+        for (int i = 0; i < advances.Length; i++)
+        {
+            if (advances[i] == Advance.SB)
+                return i;
+        }
+        return -1;
     }
 }
