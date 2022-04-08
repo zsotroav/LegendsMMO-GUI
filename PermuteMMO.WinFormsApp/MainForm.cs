@@ -372,6 +372,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
     /// <param name="loc">Location of the box in standard units</param>
     /// <param name="text">TextBox.Text property</param>
     /// <param name="backColor">TextBox.BackColor property</param>
+    /// <param name="tooltip">Tooltip text</param>
     /// <returns>Generated unit size TexBox</returns>
     private TextBox GenBox(int width, int loc, string text, Color backColor = default, string tooltip = "")
     {

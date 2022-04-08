@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBoxPKM = new System.Windows.Forms.TextBox();
             this.labelHP = new System.Windows.Forms.Label();
             this.labelSP = new System.Windows.Forms.Label();
@@ -55,6 +56,7 @@
             this.textBoxLVL = new System.Windows.Forms.TextBox();
             this.textBoxSHN = new System.Windows.Forms.TextBox();
             this.textBoxALP = new System.Windows.Forms.TextBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // textBoxPKM
@@ -367,5 +369,6 @@
         private TextBox textBoxLVL;
         private TextBox textBoxSHN;
         private TextBox textBoxALP;
+        private ToolTip toolTip;
     }
 }
