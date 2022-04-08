@@ -28,13 +28,21 @@ public partial class MainForm : Form
         if (string.IsNullOrEmpty(folderBrowserDialog.SelectedPath)) return;
 
         var inputs = GroupSeedFinder.GetInputs(folderBrowserDialog.SelectedPath);
-        if (inputs.Count < 2)
+        switch (inputs.Count)
         {
-            MessageBox.Show(@"Insufficient inputs found in folder. 
+            case < 2:
+                MessageBox.Show(@"Insufficient inputs found in folder. 
 Two (2) or more dumped files are required, four (4) recommended.", @"Error", MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-            return;
+                    MessageBoxIcon.Error);
+                return;
+            case > 4:
+                MessageBox.Show(@"Too many inputs found in folder. 
+Only the first four (4) pokemon are required.", 
+                    @"Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
         }
+
         var t = new Thread(() => SeedThreaded(inputs));
         t.Start();
         MessageBox.Show(@"Started looking for a seed. 
