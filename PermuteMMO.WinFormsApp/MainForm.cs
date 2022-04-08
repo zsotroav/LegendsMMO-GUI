@@ -1,6 +1,5 @@
 using PermuteMMO.Lib;
 using EtumrepMMO.Lib;
-using System.Threading;
 
 namespace PermuteMMO.WinFormsApp;
 
@@ -262,7 +261,8 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         pan.Controls.Add(name);
 
         // Spawn
-        pan.Controls.Add(GenBox(2,3, (permute.IsBonus ? "BS" : "SP") + permute.SpawnIndex));
+        pan.Controls.Add(GenBox(2, 3, (permute.IsBonus ? "BS" : "SP") + permute.SpawnIndex, 
+            tooltip: (permute.IsBonus ? "Bonus Spawn" : "Spawn") + permute.SpawnIndex));
 
         // Gender
         pan.Controls.Add(GenBox(1, 5,
@@ -276,17 +276,26 @@ This means that you will not have a desired pokemon in any permutation. Try chan
                 2 => SystemColors.Control,
                 1 => Color.FromArgb(255, 186, 225),
                 _ => Color.FromArgb(186, 225, 255)
+            }, entity.Gender switch
+            {
+                2 => "Genderless",
+                1 => "Female",
+                _ => "Male"
             }));
 
         // Alpha
         pan.Controls.Add(GenBox(1, 6, entity.IsAlpha ? "A" : "-",
-            entity.IsAlpha ? Color.FromArgb(255, 179, 186) : SystemColors.Control));
+            entity.IsAlpha ? Color.FromArgb(255, 179, 186) : SystemColors.Control,
+            entity.IsAlpha ? @"Alpha" : "NOT Alpha"));
 
         // Shiny odds
-        pan.Controls.Add(GenBox(1,7, entity.IsShiny ? entity.RollCountUsed.ToString() : "-"));
+        pan.Controls.Add(GenBox(1,7, entity.IsShiny ? entity.RollCountUsed.ToString() : "-",
+            tooltip: entity.IsShiny ? "Shiny rolls needed to get shiny." : "NOT Shiny."));
 
         // Shiny XOR
-        pan.Controls.Add(GenBox(1,8, entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "\u2606" : "-"));
+        pan.Controls.Add(GenBox(1,8, entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "\u2606" : "-",
+            tooltip: entity.IsShiny ? entity.ShinyXor == 0 ? "Will be a square shiny in future games that support it" :
+                "Shiny pokemon" : "NOT Shiny"));
 
         // Steps
         var i = 9;
@@ -303,24 +312,27 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             i++;
         }
 
-        // Timid warning
-        var (show, readable) = GetFeasibility(permute.Advances, entity.IsSkittish,
+        // Feasibility
+        var (show, good, desc, tooltip) = GetFeasibility(permute.Advances, entity.IsSkittish,
             SpawnGenerator.IsSkittish(spawner.GetSpawn().BaseTable));
         if (show)
         {
-            pan.Controls.Add(GenBox(4, i, readable, Color.FromArgb(255, 80, 72)));
+            pan.Controls.Add(GenBox(3, i, desc, 
+                good ? Color.FromArgb(186, 255, 201) : Color.FromArgb(255, 80, 72), 
+                tooltip));
         }
 
         panelFound.Controls.Add(pan);
     }
-
-    private static (bool show, string readable) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    
+    private static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
         if (!advances.IsAnyMulti())
-            return (true,"Single");
+            return (true,true, "Single", 
+                @"Single advances only, can be completed with catching pokemon one by one.");
 
         if (!skittishBase && !skittishBonus)
-            return (false, string.Empty);
+            return (false, true, string.Empty, string.Empty);
 
         var skittishMulti = false;
         var bonusIndex = EntityResult.GetBonusStartIndex(advances);
@@ -334,7 +346,9 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             skittishMulti |= skittishBase && advances.IsAnyMulti();
         }
 
-        return (true, skittishMulti ? "Skittish: Aggro!" : "Skittish: Single");
+        return (true, false, skittishMulti ? "SK: Agg" : "SK: Single",
+                skittishMulti ? @"Pokemon is Skittish, path only possible with other aggressive pokemon." :
+                    @"Pokemon is skittish, path is possible by catching all skittish pokemon one by one.");
     }
 
     /// <summary>
@@ -346,16 +360,21 @@ This means that you will not have a desired pokemon in any permutation. Try chan
     /// <param name="text">TextBox.Text property</param>
     /// <param name="backColor">TextBox.BackColor property</param>
     /// <returns>Generated unit size TexBox</returns>
-    private static TextBox GenBox(int width, int loc, string text, Color backColor = default) => new()
+    private TextBox GenBox(int width, int loc, string text, Color backColor = default, string tooltip = "")
     {
-        ReadOnly = true,
-        TextAlign = HorizontalAlignment.Center,
-        Location = new Point(loc * 27 + 4, 4),
-        Size = new Size(width * 23 + (width - 1) * 4, 23),
-        Text = text,
-        BackColor = backColor
-    };
-    
+        TextBox box = new()
+        {
+            ReadOnly = true,
+            TextAlign = HorizontalAlignment.Center,
+            Location = new Point(loc * 27 + 4, 4),
+            Size = new Size(width * 23 + (width - 1) * 4, 23),
+            Text = text,
+            BackColor = backColor
+        };
+        box.MouseMove += (sender, e) => toolTip.SetToolTip(box, tooltip);
+        return box;
+    }
+
     private void checkWantSquare_CheckedChanged(object sender, EventArgs e)
     {
         if (checkWantSquare.Checked)
