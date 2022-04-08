@@ -304,13 +304,37 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         }
 
         // Timid warning
-        if (BehaviorUtil.Timid.Contains(entity.Species))
+        var (show, readable) = GetFeasibility(permute.Advances, entity.IsSkittish,
+            SpawnGenerator.IsSkittish(spawner.GetSpawn().BaseTable));
+        if (show)
         {
-            var multi = permute.Advances.Any(advance => advance.IsMulti());
-            pan.Controls.Add(GenBox(3, i, "TIMID" + (multi ? " MULTI" : ""), Color.FromArgb(255, 80, 72)));
+            pan.Controls.Add(GenBox(4, i, readable, Color.FromArgb(255, 80, 72)));
         }
 
         panelFound.Controls.Add(pan);
+    }
+
+    private static (bool show, string readable) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    {
+        if (!advances.IsAnyMulti())
+            return (true,"Single");
+
+        if (!skittishBase && !skittishBonus)
+            return (false, string.Empty);
+
+        var skittishMulti = false;
+        var bonusIndex = EntityResult.GetBonusStartIndex(advances);
+        if (bonusIndex != -1)
+        {
+            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
+            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
+        }
+        else
+        {
+            skittishMulti |= skittishBase && advances.IsAnyMulti();
+        }
+
+        return (true, skittishMulti ? "Skittish: Aggro!" : "Skittish: Single");
     }
 
     /// <summary>
