@@ -293,8 +293,10 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             tooltip: entity.IsShiny ? "Shiny rolls needed to get shiny." : "NOT Shiny."));
 
         // Shiny XOR
-        pan.Controls.Add(GenBox(1,8, entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "\u2606" : "-",
-            tooltip: entity.IsShiny ? entity.ShinyXor == 0 ? "Will be a square shiny in future games that support it" :
+        pan.Controls.Add(GenBox(1,8, 
+            entity.IsShiny ? entity.ShinyXor == 0 ? "\u25FC" : "\u2606" : "-",
+            tooltip: entity.IsShiny ? entity.ShinyXor == 0 ? 
+                "Will be a square shiny in future games that support it" :
                 "Shiny pokemon" : "NOT Shiny"));
 
         // Steps
@@ -308,6 +310,17 @@ This means that you will not have a desired pokemon in any permutation. Try chan
                     Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
                     Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
                     _ => SystemColors.Control
+                }, advance switch
+                {
+                    Advance.A1 => "Catch 1",
+                    Advance.A2 => "Multi-battle 2, catch or defeat them.",
+                    Advance.A3 => "Multi-battle 3, catch or defeat them.",
+                    Advance.A4 => "Multi-battle 4, catch or defeat them.",
+                    Advance.G1 => "Catch 1, then run away >120m",
+                    Advance.G2 => "Multi-battle 2, catch or defeat them, run away >120m",
+                    Advance.G3 => "Multi-battle 3, catch or defeat them, run away >120m",
+                    Advance.SB => "Start Bonus round",
+                    _ => "???"
                 }));
             i++;
         }
