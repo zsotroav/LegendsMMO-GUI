@@ -5,7 +5,7 @@ namespace PermuteMMO.WinFormsApp;
 
 public partial class MainForm : Form
 {
-    public UserEnteredSpawnInfo spawner = new();
+    public UserEnteredSpawnInfo Spawner = new();
     public MainForm()
     {
         InitializeComponent();
@@ -15,7 +15,7 @@ public partial class MainForm : Form
         ApiPermuter.NoRes += NoRes;
         ApiPermuter.Done += Done;
 
-        comboBoxSpecies.DataSource = new BindingSource(Lib.PokemonLocationUtil.Pokemon, null);
+        comboBoxSpecies.DataSource = new BindingSource(PokemonLocationUtil.Pokemon, null);
         comboBoxSpecies.DisplayMember = "Text";
         comboBoxSpecies.ValueMember = "Value";
     }
@@ -79,7 +79,7 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
 
     private void Criteria()
     {
-        PermuteMeta.SatisfyCriteria = (result, advances) =>
+        PermuteMeta.SatisfyCriteria = (result, _) =>
             (checkWantShiny.Checked ? result.IsShiny : !result.IsShiny) &&
             (checkWantSquare.Checked ? (result.ShinyXor == 0 && result.IsShiny) : result.ShinyXor != 0) &&
             (checkWantAlpha.Checked ? result.IsAlpha : !result.IsAlpha) &&
@@ -165,12 +165,12 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
         var json = openFileDialog.FileName;
         if (string.IsNullOrEmpty(json) || !File.Exists(json)) return;
 
-        spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
+        Spawner = JsonDecoder.Deserialize<UserEnteredSpawnInfo>(File.ReadAllText(json));
 
-        var spawn = spawner.GetSpawn();
+        var spawn = Spawner.GetSpawn();
         panelFound.Controls.Clear();
         Criteria();
-        ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
+        ApiPermuter.PermuteSingle(spawn, Spawner.GetSeed(), Spawner.Species);
     }
 
     private void buttonPermutate_Click(object sender, EventArgs e)
@@ -183,17 +183,17 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
             return;
         }
 
-        spawner.Seed = textBoxSeed.Text;
-        spawner.Species = (ushort) PKHeX.Core.SpeciesName.GetSpeciesID((string) comboBoxSpecies.SelectedValue);
-        spawner.BaseCount = (int) numericSpawns.Value;
-        spawner.BaseTable = checkBoxMMO.Checked ? textBoxBase.Text : "0x0000000000000000";
-        spawner.BonusCount = (int) numericSpawns2.Value;
-        spawner.BonusTable = checkBoxMMO.Checked ? textBoxBonus.Text : "0x0000000000000000";
+        Spawner.Seed = textBoxSeed.Text;
+        Spawner.Species = (ushort) PKHeX.Core.SpeciesName.GetSpeciesID((string) comboBoxSpecies.SelectedValue);
+        Spawner.BaseCount = (int) numericSpawns.Value;
+        Spawner.BaseTable = checkBoxMMO.Checked ? textBoxBase.Text : "0x0000000000000000";
+        Spawner.BonusCount = (int) numericSpawns2.Value;
+        Spawner.BonusTable = checkBoxMMO.Checked ? textBoxBonus.Text : "0x0000000000000000";
 
-        var spawn = spawner.GetSpawn();
+        var spawn = Spawner.GetSpawn();
         panelFound.Controls.Clear();
         Criteria();
-        ApiPermuter.PermuteSingle(spawn, spawner.GetSeed(), spawner.Species);
+        ApiPermuter.PermuteSingle(spawn, Spawner.GetSeed(), Spawner.Species);
     }
 
     private static void NoRes(string extra)
@@ -247,7 +247,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         }
     }
 
-    private static void ResultClick(object sender, EventArgs e, PermuteResult permute, EntityResult entity)
+    private static void ResultClick(PermuteResult permute, EntityResult entity)
     {
         var form = new DetailsForm(permute, entity);
         form.Show();
@@ -265,7 +265,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
 
         // Name
         var name = GenBox(3, 0, entity.Name);
-        name.Click += (sender, e) => ResultClick(sender, e, permute, entity);
+        name.Click += (_, _) => ResultClick(permute, entity);
         pan.Controls.Add(name);
 
         // Spawn
@@ -335,7 +335,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
 
         // Feasibility
         var (show, good, desc, tooltip) = GetFeasibility(permute.Advances, entity.IsSkittish,
-            SpawnGenerator.IsSkittish(spawner.GetSpawn().BaseTable));
+            SpawnGenerator.IsSkittish(Spawner.GetSpawn().BaseTable));
         if (show)
         {
             pan.Controls.Add(GenBox(3, i, desc, 
@@ -393,7 +393,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             Text = text,
             BackColor = backColor
         };
-        box.MouseMove += (sender, e) => toolTip.SetToolTip(box, tooltip);
+        box.MouseMove += (_, _) => toolTip.SetToolTip(box, tooltip);
         return box;
     }
 

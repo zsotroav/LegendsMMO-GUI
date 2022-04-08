@@ -23,7 +23,7 @@ public partial class DetailsForm : Form
             1 => Color.FromArgb(255, 186, 225),
             _ => Color.FromArgb(186, 225, 255)
         };
-        textBoxGEN.MouseMove += (sender, e) => toolTip.SetToolTip(textBoxGEN, entity.Gender switch
+        textBoxGEN.MouseMove += (_, _) => toolTip.SetToolTip(textBoxGEN, entity.Gender switch
         {
             2 => "Genderless",
             1 => "Female",
@@ -61,7 +61,7 @@ public partial class DetailsForm : Form
                         _ => SystemColors.Control
                     }
             };
-            box.MouseMove += (sender, e) => toolTip.SetToolTip(box, advance switch
+            box.MouseMove += (_,_) => toolTip.SetToolTip(box, advance switch
             {
                 Advance.A1 => "Catch 1",
                 Advance.A2 => "Multi-battle 2, catch or defeat them.",
