@@ -5,9 +5,12 @@ namespace PermuteMMO.WinFormsApp;
 
 public partial class MainForm : Form
 {
+    private List<Results> _resultsList = new();
     public UserEnteredSpawnInfo Spawner = new();
     public MainForm()
     {
+
+        PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
         InitializeComponent();
         // TODO: MMOSpawner
         // TODO: MOSpawner
@@ -18,6 +21,18 @@ public partial class MainForm : Form
         comboBoxSpecies.DataSource = new BindingSource(PokemonLocationUtil.Pokemon, null);
         comboBoxSpecies.DisplayMember = "Text";
         comboBoxSpecies.ValueMember = "Value";
+
+        comboWantShiny.DataSource = new BindingSource(Utils.ShinyValues, null);
+        comboWantShiny.DisplayMember = "Text";
+        comboWantShiny.ValueMember = "Value";
+
+        comboWantGender.DataSource = new BindingSource(Utils.GenderValues, null);
+        comboWantGender.DisplayMember = "Text";
+        comboWantGender.ValueMember = "Value";
+
+        comboWantAlpha.DataSource = new BindingSource(Utils.AlphaValues, null);
+        comboWantAlpha.DisplayMember = "Text";
+        comboWantAlpha.ValueMember = "Value";
     }
 
     #region Etumrep
@@ -76,22 +91,6 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
     }
 
     #endregion
-
-    private void Criteria()
-    {
-        PermuteMeta.SatisfyCriteria = (result, _) =>
-            (checkWantShiny.Checked ? result.IsShiny : !result.IsShiny) &&
-            (checkWantSquare.Checked ? (result.ShinyXor == 0 && result.IsShiny) : result.ShinyXor != 0) &&
-            (checkWantAlpha.Checked ? result.IsAlpha : !result.IsAlpha) &&
-            (comboWantGender.Text switch
-            {
-                "M" => result.Gender == 0,
-                "F" => result.Gender == 1,
-                "/" => result.Gender == 2,
-                _ => result.Gender != 9
-            });
-        SpawnGenerator.MaxShinyRolls = (int) numericWantMax.Value;
-    }
 
     private void checkBoxMMO_CheckedChanged(object sender, EventArgs e)
     {
@@ -169,7 +168,7 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
 
         var spawn = Spawner.GetSpawn();
         panelFound.Controls.Clear();
-        Criteria();
+        _resultsList.Clear();
         ApiPermuter.PermuteSingle(spawn, Spawner.GetSeed(), Spawner.Species);
     }
 
@@ -192,19 +191,24 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
 
         var spawn = Spawner.GetSpawn();
         panelFound.Controls.Clear();
-        Criteria();
+        _resultsList.Clear();
         ApiPermuter.PermuteSingle(spawn, Spawner.GetSeed(), Spawner.Species);
     }
 
     private static void NoRes(string extra)
     {
         MessageBox.Show($@"No results found{extra}
-This means that you will not have a desired pokemon in any permutation. Try changing the wanted pokemon criteria.",
+This means that you will not have a desirable pokemon in any permutation.",
             @"No results", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
 
-    private static void Done(string extra)
+    private void Done(string extra)
     {
+        foreach (var res in _resultsList.Where(res => res.Qualifies))
+        {
+            PrintResult(res.Permute, res.Entity);
+        }
+
         MessageBox.Show($@"Done permutating{extra}", @"Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
     }
 
@@ -253,7 +257,31 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         form.Show();
     }
 
-    private void Result(PermuteResult permute, EntityResult entity)
+    private void buttonReload_Click(object sender, EventArgs e)
+    {
+        panelFound.Controls.Clear();
+        
+        foreach (var res in _resultsList)
+        {
+            res.Qualifies = res.Qualify((ShinyState)comboWantShiny.SelectedValue, (State)comboWantAlpha.SelectedValue, (Gender)comboWantGender.SelectedValue, (int)numericWantMax.Value);
+            if (res.Qualifies)
+                PrintResult(res.Permute, res.Entity);
+        }
+        MessageBox.Show($@"Done updating found pokemon!", @"Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+    }
+
+    private void Result(PermuteResult permute)
+    {
+        var res = new Results()
+        {
+            Permute = permute,
+            Entity = permute.Entity
+        };
+        res.Qualifies = res.Qualify((ShinyState)comboWantShiny.SelectedValue, (State)comboWantAlpha.SelectedValue, (Gender)comboWantGender.SelectedValue, (int)numericWantMax.Value );
+        _resultsList.Add(res);
+    }
+
+    private void PrintResult(PermuteResult permute, EntityResult entity)
     {
         // Container Panel
         var pan = new Panel
@@ -392,16 +420,5 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         };
         box.MouseMove += (_, _) => toolTip.SetToolTip(box, tooltip);
         return box;
-    }
-
-    private void checkWantSquare_CheckedChanged(object sender, EventArgs e)
-    {
-        if (checkWantSquare.Checked)
-        {
-            checkWantShiny.Checked = true;
-            checkWantShiny.Enabled = false;
-        }
-        else
-            checkWantShiny.Enabled = true;
     }
 }

@@ -22,7 +22,7 @@ public static class ApiPermuter
     public static event MOSpawnerDel? MOSpawner;
 
     // Return results
-    public delegate void ResultDel(PermuteResult permute, EntityResult entity);
+    public delegate void ResultDel(PermuteResult permute);
     public static event ResultDel? Result;
 
     // $@"No results found{extra}"
@@ -77,7 +77,7 @@ public static class ApiPermuter
                 Message?.Invoke($@"Parameters: {spawn} \n");
                 foreach (var permuteResult in result.Results)
                 {
-                    Result?.Invoke(permuteResult, permuteResult.Entity);
+                    Result?.Invoke(permuteResult);
                 }
             }
 
@@ -128,7 +128,7 @@ public static class ApiPermuter
             Message?.Invoke($@"Parameters: {spawn} \n");
             foreach (var permuteResult in result.Results)
             {
-                Result?.Invoke(permuteResult, permuteResult.Entity);
+                Result?.Invoke(permuteResult);
             }
         }
         Done?.Invoke("Mass Outbreaks.");
@@ -148,7 +148,7 @@ public static class ApiPermuter
             NoRes?.Invoke();
         else
             foreach (var permuteResult in result.Results)
-                Result?.Invoke(permuteResult, permuteResult.Entity);
+                Result?.Invoke(permuteResult);
 
         Done?.Invoke();
         Message?.Invoke();

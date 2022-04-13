@@ -33,15 +33,16 @@
             this.buttonEtumrep = new System.Windows.Forms.Button();
             this.checkBoxMMO = new System.Windows.Forms.CheckBox();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.buttonReload = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.comboWantAlpha = new System.Windows.Forms.ComboBox();
+            this.comboWantShiny = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.numericWantMax = new System.Windows.Forms.NumericUpDown();
             this.comboWantGender = new System.Windows.Forms.ComboBox();
-            this.checkWantSquare = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.checkWantAlpha = new System.Windows.Forms.CheckBox();
-            this.checkWantShiny = new System.Windows.Forms.CheckBox();
             this.buttonJSON = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxWarn = new System.Windows.Forms.TextBox();
@@ -70,6 +71,7 @@
             this.panelFound = new System.Windows.Forms.Panel();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericWantMax)).BeginInit();
@@ -78,7 +80,6 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSpawns)).BeginInit();
             this.panel4.SuspendLayout();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // panel1
@@ -124,24 +125,62 @@
             // panel5
             // 
             this.panel5.BackColor = System.Drawing.SystemColors.Control;
+            this.panel5.Controls.Add(this.buttonReload);
+            this.panel5.Controls.Add(this.label10);
+            this.panel5.Controls.Add(this.comboWantAlpha);
+            this.panel5.Controls.Add(this.comboWantShiny);
             this.panel5.Controls.Add(this.label9);
             this.panel5.Controls.Add(this.label8);
             this.panel5.Controls.Add(this.numericWantMax);
             this.panel5.Controls.Add(this.comboWantGender);
-            this.panel5.Controls.Add(this.checkWantSquare);
             this.panel5.Controls.Add(this.textBox1);
             this.panel5.Controls.Add(this.button1);
-            this.panel5.Controls.Add(this.checkWantAlpha);
-            this.panel5.Controls.Add(this.checkWantShiny);
             this.panel5.Location = new System.Drawing.Point(3, 157);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(636, 31);
             this.panel5.TabIndex = 5;
             // 
+            // buttonReload
+            // 
+            this.buttonReload.Location = new System.Drawing.Point(523, 3);
+            this.buttonReload.Name = "buttonReload";
+            this.buttonReload.Size = new System.Drawing.Size(69, 23);
+            this.buttonReload.TabIndex = 22;
+            this.buttonReload.Text = "Update";
+            this.buttonReload.UseVisualStyleBackColor = true;
+            this.buttonReload.Click += new System.EventHandler(this.buttonReload_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(180, 7);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 15);
+            this.label10.TabIndex = 21;
+            this.label10.Text = "Alpha:";
+            // 
+            // comboWantAlpha
+            // 
+            this.comboWantAlpha.FormattingEnabled = true;
+            this.comboWantAlpha.Location = new System.Drawing.Point(227, 4);
+            this.comboWantAlpha.Name = "comboWantAlpha";
+            this.comboWantAlpha.Size = new System.Drawing.Size(55, 23);
+            this.comboWantAlpha.TabIndex = 20;
+            this.comboWantAlpha.Text = "alpha";
+            // 
+            // comboWantShiny
+            // 
+            this.comboWantShiny.FormattingEnabled = true;
+            this.comboWantShiny.Location = new System.Drawing.Point(119, 4);
+            this.comboWantShiny.Name = "comboWantShiny";
+            this.comboWantShiny.Size = new System.Drawing.Size(55, 23);
+            this.comboWantShiny.TabIndex = 19;
+            this.comboWantShiny.Text = "shiny";
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(311, 7);
+            this.label9.Location = new System.Drawing.Point(288, 7);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(48, 15);
             this.label9.TabIndex = 18;
@@ -150,7 +189,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(426, 8);
+            this.label8.Location = new System.Drawing.Point(403, 7);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(58, 15);
             this.label8.TabIndex = 17;
@@ -158,7 +197,7 @@
             // 
             // numericWantMax
             // 
-            this.numericWantMax.Location = new System.Drawing.Point(490, 5);
+            this.numericWantMax.Location = new System.Drawing.Point(467, 4);
             this.numericWantMax.Maximum = new decimal(new int[] {
             32,
             0,
@@ -176,27 +215,11 @@
             // comboWantGender
             // 
             this.comboWantGender.FormattingEnabled = true;
-            this.comboWantGender.Items.AddRange(new object[] {
-            "ANY",
-            "M",
-            "F",
-            "/"});
-            this.comboWantGender.Location = new System.Drawing.Point(365, 4);
+            this.comboWantGender.Location = new System.Drawing.Point(342, 4);
             this.comboWantGender.Name = "comboWantGender";
             this.comboWantGender.Size = new System.Drawing.Size(55, 23);
             this.comboWantGender.TabIndex = 15;
             this.comboWantGender.Text = "ANY";
-            // 
-            // checkWantSquare
-            // 
-            this.checkWantSquare.AutoSize = true;
-            this.checkWantSquare.Location = new System.Drawing.Point(180, 6);
-            this.checkWantSquare.Name = "checkWantSquare";
-            this.checkWantSquare.Size = new System.Drawing.Size(62, 19);
-            this.checkWantSquare.TabIndex = 14;
-            this.checkWantSquare.Text = "Square";
-            this.checkWantSquare.UseVisualStyleBackColor = true;
-            this.checkWantSquare.CheckedChanged += new System.EventHandler(this.checkWantSquare_CheckedChanged);
             // 
             // textBox1
             // 
@@ -219,28 +242,6 @@
             this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Visible = false;
-            // 
-            // checkWantAlpha
-            // 
-            this.checkWantAlpha.AutoSize = true;
-            this.checkWantAlpha.Location = new System.Drawing.Point(248, 6);
-            this.checkWantAlpha.Name = "checkWantAlpha";
-            this.checkWantAlpha.Size = new System.Drawing.Size(57, 19);
-            this.checkWantAlpha.TabIndex = 12;
-            this.checkWantAlpha.Text = "Alpha";
-            this.checkWantAlpha.UseVisualStyleBackColor = true;
-            // 
-            // checkWantShiny
-            // 
-            this.checkWantShiny.AutoSize = true;
-            this.checkWantShiny.Checked = true;
-            this.checkWantShiny.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkWantShiny.Location = new System.Drawing.Point(119, 6);
-            this.checkWantShiny.Name = "checkWantShiny";
-            this.checkWantShiny.Size = new System.Drawing.Size(55, 19);
-            this.checkWantShiny.TabIndex = 11;
-            this.checkWantShiny.Text = "Shiny";
-            this.checkWantShiny.UseVisualStyleBackColor = true;
             // 
             // buttonJSON
             // 
@@ -596,14 +597,11 @@
         private Button buttonJSON;
         private OpenFileDialog openFileDialog;
         private Panel panel4;
-        private CheckBox checkWantAlpha;
-        private CheckBox checkWantShiny;
         private Button button1;
         private Panel panel5;
         private TextBox textBox1;
         private TextBox textBox4;
         private Panel panelFound;
-        private CheckBox checkWantSquare;
         private ComboBox comboWantGender;
         private Label label9;
         private Label label8;
@@ -611,5 +609,9 @@
         private Button buttonEtumrep;
         private FolderBrowserDialog folderBrowserDialog;
         private ToolTip toolTip;
+        private ComboBox comboWantShiny;
+        private ComboBox comboWantAlpha;
+        private Label label10;
+        private Button buttonReload;
     }
 }
