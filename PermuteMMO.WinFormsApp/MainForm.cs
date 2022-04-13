@@ -251,9 +251,9 @@ This means that you will not have a desirable pokemon in any permutation.",
         }
     }
 
-    private static void ResultClick(PermuteResult permute, EntityResult entity)
+    private void ResultClick(PermuteResult permute, EntityResult entity)
     {
-        var form = new DetailsForm(permute, entity);
+        var form = new DetailsForm(permute, entity, this);
         form.Show();
     }
 
@@ -366,7 +366,7 @@ This means that you will not have a desirable pokemon in any permutation.",
         panelFound.Controls.Add(pan);
     }
     
-    private static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    public static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
         if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
             return (true,true, "Single", 
