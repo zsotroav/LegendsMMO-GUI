@@ -76,7 +76,7 @@ public sealed class EntityResult
         return     " -- Skittish: Single advances!";
     }
 
-    public static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)
+    private static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)
     {
         for (int i = 0; i < advances.Length; i++)
         {
