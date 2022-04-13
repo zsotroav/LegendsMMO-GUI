@@ -59,14 +59,7 @@ public static class ApiPermuter
 
                 Debug.Assert(spawner.HasBase);
                 var seed = spawner.SpawnSeed;
-                var spawn = new SpawnInfo
-                {
-                    BaseCount = spawner.BaseCount,
-                    BaseTable = spawner.BaseTable,
-
-                    BonusCount = spawner.BonusCount,
-                    BonusTable = spawner.BonusTable,
-                };
+                var spawn = new SpawnInfo(spawner);
 
                 var result = Permuter.Permute(spawn, seed);
                 if (!result.HasResults)
@@ -119,12 +112,7 @@ public static class ApiPermuter
             Debug.Assert(spawner.IsValid);
 
             var seed = spawner.SpawnSeed;
-            var spawn = new SpawnInfo
-            {
-                BaseCount = spawner.BaseCount,
-                BaseTable = spawner.DisplaySpecies,
-                Type = SpawnType.Outbreak,
-            };
+            var spawn = new SpawnInfo(spawner);
 
             var result = Permuter.Permute(spawn, seed);
             if (!result.HasResults)

@@ -5,7 +5,7 @@
 /// </summary>
 public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in int SpawnIndex)
 {
-    private bool IsBonus => Array.IndexOf(Advances, Advance.CR) != -1;
+    public bool IsBonus => Array.IndexOf(Advances, Advance.CR) != -1;
     private int WaveIndex => Advances.Count(adv => adv == Advance.CR);
 
     public string GetLine(PermuteResult? prev, bool isActionMultiResult, bool skittishBase, bool skittishBonus)
@@ -74,7 +74,7 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
         return " -- Skittish: Single advances!";
     }
 
-    private static int GetNextWaveStartIndex(ReadOnlySpan<Advance> advances)
+    public static int GetNextWaveStartIndex(ReadOnlySpan<Advance> advances)
     {
         for (int i = 0; i < advances.Length; i++)
         {

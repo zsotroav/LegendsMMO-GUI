@@ -269,8 +269,9 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         pan.Controls.Add(name);
 
         // Spawn
-        pan.Controls.Add(GenBox(2, 3, (permute.IsBonus ? "BS" : "SP") + permute.SpawnIndex, 
-            tooltip: (permute.IsBonus ? "Bonus Spawn" : "Spawn") + permute.SpawnIndex));
+        var index = permute.Advances.Count(adv => adv == Advance.CR);
+        pan.Controls.Add(GenBox(2, 3, (permute.IsBonus ? (index == 1 ? "BS" : $"W{index}-") : "SP") + permute.SpawnIndex, 
+            tooltip: (permute.IsBonus ? (index == 1 ? "Bonus Spawn " : $"Wave{index} ") : "Spawn") + permute.SpawnIndex));
 
         // Gender
         pan.Controls.Add(GenBox(1, 5,
@@ -309,6 +310,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
 
         // Steps
         var i = 9;
+        AdvanceExtensions.Raw = false;
         foreach (var advance in permute.Advances)
         {
             pan.Controls.Add(GenBox(1, i, advance.ToString(),
@@ -316,26 +318,16 @@ This means that you will not have a desired pokemon in any permutation. Try chan
                 {
                     Advance.A1 => Color.FromArgb(186, 255, 201),
                     Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
+                    Advance.S2 or Advance.S3 or Advance.S4 => Color.FromArgb(255, 186, 225),
                     Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
                     _ => SystemColors.Control
-                }, advance switch
-                {
-                    Advance.A1 => "Catch 1",
-                    Advance.A2 => "Multi-battle 2, catch or defeat them.",
-                    Advance.A3 => "Multi-battle 3, catch or defeat them.",
-                    Advance.A4 => "Multi-battle 4, catch or defeat them.",
-                    Advance.G1 => "Catch 1, then run away >120m",
-                    Advance.G2 => "Multi-battle 2, catch or defeat them, run away >120m",
-                    Advance.G3 => "Multi-battle 3, catch or defeat them, run away >120m",
-                    Advance.SB => "Start Bonus round",
-                    _ => "???"
-                }));
+                }, advance.GetName()));
             i++;
         }
 
         // Feasibility
         var (show, good, desc, tooltip) = GetFeasibility(permute.Advances, entity.IsSkittish,
-            SpawnGenerator.IsSkittish(Spawner.GetSpawn().BaseTable));
+            SpawnGenerator.IsSkittish(Spawner.GetSpawn().Set.Table));
         if (show)
         {
             pan.Controls.Add(GenBox(3, i, desc, 
@@ -348,7 +340,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
     
     private static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
-        if (!advances.IsAnyMulti())
+        if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
             return (true,true, "Single", 
                 @"Single advances only, can be completed with catching pokemon one by one.");
 
@@ -356,7 +348,7 @@ This means that you will not have a desired pokemon in any permutation. Try chan
             return (false, true, string.Empty, string.Empty);
 
         var skittishMulti = false;
-        var bonusIndex = EntityResult.GetBonusStartIndex(advances);
+        var bonusIndex = PermuteResult.GetNextWaveStartIndex(advances);
         if (bonusIndex != -1)
         {
             skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
@@ -366,6 +358,11 @@ This means that you will not have a desired pokemon in any permutation. Try chan
         {
             skittishMulti |= skittishBase && advances.IsAnyMulti();
         }
+
+        if (advances.IsAnyMultiScare())
+            return (true, false, skittishMulti ? "SK: MAgg" : "SK: Multi",
+                skittishMulti ? @"Pokemon is Multi scare-Skittish, path only possible by multi scaring with other aggressive pokemon." :
+                    @"Pokemon is skittish, path is possible by multi scaring all skittish pokemon.");
 
         return (true, false, skittishMulti ? "SK: Agg" : "SK: Single",
                 skittishMulti ? @"Pokemon is Skittish, path only possible with other aggressive pokemon." :

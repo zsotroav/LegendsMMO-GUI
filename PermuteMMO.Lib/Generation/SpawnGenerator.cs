@@ -17,6 +17,7 @@ public static class SpawnGenerator
     public static byte[] BackingArray => SaveFile.Blocks.GetBlock(0x02168706).Data;
     public static bool HasCharm { get; set; } = true;
     public static bool UseSaveFileShinyRolls { get; set; }
+    public static int MaxShinyRolls { get; set; }
     #endregion
 
     private static SAV8LA GetFake()
@@ -112,7 +113,12 @@ public static class SpawnGenerator
     private static int GetRerollCount(in int species, SpawnType type)
     {
         if (!UseSaveFileShinyRolls)
-            return (int)type;
+        {
+            if (MaxShinyRolls is not 0)
+                return MaxShinyRolls;
+            return (int) type;
+        }
+
         bool perfect = Pokedex.IsPerfect(species);
         bool complete = Pokedex.IsComplete(species);
         return 1 + (complete ? 1 : 0) + (perfect ? 2 : 0) + (HasCharm ? 3 : 0) + (int)type;
