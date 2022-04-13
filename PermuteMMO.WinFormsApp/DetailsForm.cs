@@ -44,6 +44,7 @@ public partial class DetailsForm : Form
                 entity.Weight.ToString());
         
         var i = 0;
+        AdvanceExtensions.Raw = false;
         foreach (var advance in permute.Advances)
         {
             var box = new TextBox
@@ -57,22 +58,12 @@ public partial class DetailsForm : Form
                     {
                         Advance.A1 => Color.FromArgb(186, 255, 201),
                         Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
+                        Advance.S2 or Advance.S3 or Advance.S4 => Color.FromArgb(255, 186, 225),
                         Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
                         _ => SystemColors.Control
                     }
             };
-            box.MouseMove += (_,_) => toolTip.SetToolTip(box, advance switch
-            {
-                Advance.A1 => "Catch 1",
-                Advance.A2 => "Multi-battle 2, catch or defeat them.",
-                Advance.A3 => "Multi-battle 3, catch or defeat them.",
-                Advance.A4 => "Multi-battle 4, catch or defeat them.",
-                Advance.G1 => "Catch 1, then run away >120m",
-                Advance.G2 => "Multi-battle 2, catch or defeat them, run away >120m",
-                Advance.G3 => "Multi-battle 3, catch or defeat them, run away >120m",
-                Advance.SB => "Start Bonus round",
-                _ => "???"
-            });
+            box.MouseMove += (_,_) => toolTip.SetToolTip(box, advance.GetName());
             panelSTP.Controls.Add(box);
             i++;
         }
