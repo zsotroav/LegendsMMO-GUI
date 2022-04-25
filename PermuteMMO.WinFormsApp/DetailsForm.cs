@@ -5,10 +5,10 @@ namespace PermuteMMO.WinFormsApp;
 
 public partial class DetailsForm : Form
 {
-    public DetailsForm(PermuteResult permute, EntityResult entity, MainForm mainForm)
+    public DetailsForm(PermuteResult permute, EntityResult entity)
     {
         InitializeComponent();
-        textBoxPKM.Text = $@"{entity.Name}";
+        textBoxPKM.Text = $@"{SpeciesName.GetSpeciesName(entity.Species, 2)}";
         textBoxLVL.Text = $@"lvl {entity.Level}";
 
         textBoxGEN.Text = entity.Gender switch
@@ -59,29 +59,19 @@ public partial class DetailsForm : Form
                 Location = new Point(i * 27 + 4, 4),
                 Size = new Size(23, 23),
                 Text = advance.ToString(),
-                BackColor = advance switch
-                    {
-                        Advance.A1 => Color.FromArgb(186, 255, 201),
-                        Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
-                        Advance.S2 or Advance.S3 or Advance.S4 => Color.FromArgb(255, 186, 225),
-                        Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
-                        _ => SystemColors.Control
-                    }
+                BackColor = StaticUtils.AdvanceColor(advance)
             };
             box.MouseMove += (_,_) => toolTip.SetToolTip(box, advance.GetName());
             panelSTP.Controls.Add(box);
             i++;
         }
 
-        // Feasibility
-        var (show, good, desc, tooltip) = MainForm.GetFeasibility(permute.Advances, entity.IsSkittish,
-            SpawnGenerator.IsSkittish(mainForm.Spawner.GetSpawn().Set.Table));
-        if (show)
-        {
-            textBoxRemarks.BackColor = good ? Color.FromArgb(186, 255, 201) : Color.FromArgb(255, 80, 72);
-            textBoxRemarks.Text = desc;
-            toolTip.SetToolTip(textBoxRemarks, tooltip);
-        }
+        // Remarks
+        var (show, good, desc, tooltip) = MainForm.GetFeasibility(permute.Advances);
+        if (!show) return;
+        textBoxRemarks.BackColor = good ? Color.FromArgb(186, 255, 201) : Color.FromArgb(255, 80, 72);
+        textBoxRemarks.Text = desc;
+        textBoxRemarks.MouseMove += (_, _) => toolTip.SetToolTip(textBoxRemarks, tooltip);
     }
 
     public Color RatingColor(byte iv) => iv switch
