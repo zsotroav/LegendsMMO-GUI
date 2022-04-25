@@ -1,5 +1,6 @@
 using PermuteMMO.Lib;
 using EtumrepMMO.Lib;
+using PKHeX.Core;
 
 namespace PermuteMMO.WinFormsApp;
 
@@ -10,7 +11,7 @@ public partial class MainForm : Form
     public MainForm()
     {
 
-        PermuteMeta.SatisfyCriteria = (result, advances) => result.IsShiny;
+        PermuteMeta.SatisfyCriteria = (result, _) => result.IsShiny;
         InitializeComponent();
         // TODO: MMOSpawner
         // TODO: MOSpawner
@@ -64,7 +65,7 @@ Only the first four (4) pokemon are required.",
 This may take a while...", @"Started seed thread", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
-    private void SeedThreaded(IReadOnlyList<PKHeX.Core.PKM> inputs)
+    private void SeedThreaded(IReadOnlyList<PKM> inputs)
     {
         var result = GroupSeedFinder.FindSeed(inputs);
         if (result is default(ulong))
@@ -183,7 +184,7 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
         }
 
         Spawner.Seed = textBoxSeed.Text;
-        Spawner.Species = (ushort) PKHeX.Core.SpeciesName.GetSpeciesID((string) comboBoxSpecies.SelectedValue);
+        Spawner.Species = (ushort) SpeciesName.GetSpeciesID((string) comboBoxSpecies.SelectedValue);
         Spawner.BaseCount = (int) numericSpawns.Value;
         Spawner.BaseTable = checkBoxMMO.Checked ? textBoxBase.Text : "0x0000000000000000";
         Spawner.BonusCount = (int) numericSpawns2.Value;
@@ -253,7 +254,7 @@ This means that you will not have a desirable pokemon in any permutation.",
 
     private void ResultClick(PermuteResult permute, EntityResult entity)
     {
-        var form = new DetailsForm(permute, entity, this);
+        var form = new DetailsForm(permute, entity);
         form.Show();
     }
 
@@ -292,14 +293,14 @@ This means that you will not have a desirable pokemon in any permutation.",
         };
 
         // Name
-        var name = GenBox(3, 0, entity.Name);
+        var name = GenBox(3, 0, SpeciesName.GetSpeciesName(entity.Species, 2));
         name.Click += (_, _) => ResultClick(permute, entity);
         pan.Controls.Add(name);
 
         // Spawn
         var index = permute.Advances.Count(adv => adv == Advance.CR);
-        pan.Controls.Add(GenBox(2, 3, (permute.IsBonus ? (index == 1 ? "BS" : $"W{index}-") : "SP") + permute.SpawnIndex, 
-            tooltip: (permute.IsBonus ? (index == 1 ? "Bonus Spawn " : $"Wave{index} ") : "Spawn") + permute.SpawnIndex));
+        pan.Controls.Add(GenBox(2, 3, (permute.IsBonus ? (index == 1 ? "BS" : $"W{index}-") : "SP") + entity.Index, 
+            tooltip: (permute.IsBonus ? (index == 1 ? "Bonus Spawn " : $"Wave{index} ") : "Spawn") + entity.Index));
 
         // Gender
         pan.Controls.Add(GenBox(1, 5,
@@ -342,20 +343,12 @@ This means that you will not have a desirable pokemon in any permutation.",
         foreach (var advance in permute.Advances)
         {
             pan.Controls.Add(GenBox(1, i, advance.ToString(),
-                advance switch
-                {
-                    Advance.A1 => Color.FromArgb(186, 255, 201),
-                    Advance.A2 or Advance.A3 or Advance.A4 => Color.FromArgb(255, 223, 186),
-                    Advance.S2 or Advance.S3 or Advance.S4 => Color.FromArgb(255, 186, 225),
-                    Advance.G1 or Advance.G2 or Advance.G3 => Color.FromArgb(255, 179, 186),
-                    _ => SystemColors.Control
-                }, advance.GetName()));
+                StaticUtils.AdvanceColor(advance), advance.GetName()));
             i++;
         }
 
         // Feasibility
-        var (show, good, desc, tooltip) = GetFeasibility(permute.Advances, entity.IsSkittish,
-            SpawnGenerator.IsSkittish(Spawner.GetSpawn().Set.Table));
+        var (show, good, desc, tooltip) = GetFeasibility(permute.Advances);
         if (show)
         {
             pan.Controls.Add(GenBox(3, i, desc, 
@@ -366,35 +359,35 @@ This means that you will not have a desirable pokemon in any permutation.",
         panelFound.Controls.Add(pan);
     }
     
-    public static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    public static (bool show, bool good, string descShort, string descLong) GetFeasibility(ReadOnlySpan<Advance> advances)
     {
-        if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
-            return (true,true, "Single", 
-                @"Single advances only, can be completed with catching pokemon one by one.");
+        if (advances.IsAny(AdvanceExtensions.IsMultiScare))
+        {
 
-        if (!skittishBase && !skittishBonus)
+            return (true, false, advances.IsAny(AdvanceExtensions.IsMultiBeta) ? @"SK: MAgg" : @"SK: Multi",
+                advances.IsAny(AdvanceExtensions.IsMultiBeta) ? 
+                    @"Pokemon is Multi-scare-Skittish, path only possible by multi scaring with other aggressive pokemon." :
+                    @"Pokemon is skittish, path is possible by multi scaring all skittish pokemon.");
+        }
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiBeta))
+            return (true, false, @"SK: Agg", @"Pokemon is Skittish, path only possible with other aggressive pokemon.");
+
+        if (advances.IsAny(z => z == Advance.B1))
+        {
+            return !advances.IsAny(AdvanceExtensions.IsMultiAggressive) ?
+                (true, true, @"SK: Single", @"Pokemon is skittish, path is possible by catching all skittish pokemon one by one.") : 
+                (true, false, @"SK: MoAg", @"Pokemon is skittish, Mostly aggressive!");
+        }
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiOblivious))
+            return (true, false, @"OB: Agg", @"Pokemon is oblivious, path only possible by multi battling with other aggressive pokemon.");
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiAggressive))
             return (false, true, string.Empty, string.Empty);
 
-        var skittishMulti = false;
-        var bonusIndex = PermuteResult.GetNextWaveStartIndex(advances);
-        if (bonusIndex != -1)
-        {
-            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
-            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
-        }
-        else
-        {
-            skittishMulti |= skittishBase && advances.IsAnyMulti();
-        }
-
-        if (advances.IsAnyMultiScare())
-            return (true, false, skittishMulti ? "SK: MAgg" : "SK: Multi",
-                skittishMulti ? @"Pokemon is Multi scare-Skittish, path only possible by multi scaring with other aggressive pokemon." :
-                    @"Pokemon is skittish, path is possible by multi scaring all skittish pokemon.");
-
-        return (true, false, skittishMulti ? "SK: Agg" : "SK: Single",
-                skittishMulti ? @"Pokemon is Skittish, path only possible with other aggressive pokemon." :
-                    @"Pokemon is skittish, path is possible by catching all skittish pokemon one by one.");
+        return (true, true, @"Single",
+            @"Single advances only, can be completed with catching pokemon one by one.");
     }
 
     /// <summary>

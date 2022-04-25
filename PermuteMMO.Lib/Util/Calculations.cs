@@ -19,8 +19,8 @@ public static class Calculations
             var rng = new Xoroshiro128Plus(seed);
             for (int i = 0; i < count; i++)
             {
-                _ = rng.Next();
-                _ = rng.Next(); // Unknown
+                _ = rng.Next(); // generate/slot seed
+                _ = rng.Next(); // alpha move
             }
             seed = rng.Next(); // Reset the seed for future spawns.
         }
@@ -36,8 +36,8 @@ public static class Calculations
         var rng = new Xoroshiro128Plus(seed);
         for (int i = 0; i < count; i++)
         {
-            _ = rng.Next();
-            _ = rng.Next(); // Unknown
+            _ = rng.Next(); // generate/slot seed
+            _ = rng.Next(); // alpha move
         }
 
         return rng.Next(); // Reset the seed for future spawns.
@@ -49,16 +49,16 @@ public static class Calculations
     /// <param name="groupSeed">Group seed to spawn things for this regeneration round.</param>
     /// <param name="spawnIndex">1-indexed (not 0) spawn index.</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static ulong GetGenerateSeed(in ulong groupSeed, in int spawnIndex)
+    public static (ulong Generate, ulong Alpha) GetGenerateSeed(in ulong groupSeed, in int spawnIndex)
     {
         var rng = new Xoroshiro128Plus(groupSeed);
         for (int i = 1; i <= spawnIndex; i++)
         {
-            var subSeed = rng.Next();
-            _ = rng.Next(); // Unknown
+            var subSeed = rng.Next(); // generate/slot seed
+            var alpha = rng.Next(); // alpha move, don't care
 
             if (i == spawnIndex)
-                return subSeed;
+                return (subSeed, alpha);
         }
 
         throw new ArgumentOutOfRangeException(nameof(spawnIndex));
@@ -75,8 +75,8 @@ public static class Calculations
         var rng = new Xoroshiro128Plus(groupSeed);
         for (int i = 1; i <= spawnIndex; i++)
         {
-            var subSeed = rng.Next();
-            _ = rng.Next(); // Unknown
+            var subSeed = rng.Next(); // generate/slot seed
+            _ = rng.Next(); // alpha move, don't care
 
             if (i != spawnIndex)
                 continue;
