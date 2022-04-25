@@ -67,8 +67,8 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
 
     private void SeedThreaded(IReadOnlyList<PKM> inputs)
     {
-        var result = GroupSeedFinder.FindSeed(inputs);
-        if (result is default(ulong))
+        var (result, index) = GroupSeedFinder.FindSeed(inputs);
+        if (index == -1)
         {
             MessageBox.Show(
                 $@"No group seeds found with the input data. Double check your inputs (valid inputs: {inputs.Count}).",
@@ -77,7 +77,7 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
         else
         {
             SetSeed(result.ToString());
-            MessageBox.Show($@"Found seed! ({result})", @"Seed found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($@"Found seed from input {index+1}/{inputs.Count}! ({result})", @"Seed found", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 
@@ -88,7 +88,7 @@ This may take a while...", @"Started seed thread", MessageBoxButtons.OK, Message
             Invoke(new Action<string>(SetSeed), seed);
             return;
         }
-        textBoxSeed.Text += seed;
+        textBoxSeed.Text = seed;
     }
 
     #endregion
