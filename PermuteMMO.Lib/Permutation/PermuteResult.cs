@@ -1,21 +1,24 @@
-﻿namespace PermuteMMO.Lib;
+﻿using System.Diagnostics;
+
+namespace PermuteMMO.Lib;
 
 /// <summary>
 /// <see cref="EntityResult"/> wrapper with some utility logic to print to console.
 /// </summary>
-public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in int SpawnIndex)
+[DebuggerDisplay($"{{{nameof(StepSummary)},nq}}")]
+public sealed record PermuteResult(Advance[] Advances, EntityResult Entity)
 {
     public bool IsBonus => Array.IndexOf(Advances, Advance.CR) != -1;
     private int WaveIndex => Advances.Count(adv => adv == Advance.CR);
 
-    public string GetLine(PermuteResult? prev, bool isActionMultiResult, bool skittishBase, bool skittishBonus)
+    public string GetLine(PermuteResult? prev, bool isActionMultiResult, bool hasChildChain)
     {
         var steps = GetSteps(prev);
-        var feasibility = GetFeasibility(Advances, skittishBase, skittishBonus);
+        var feasibility = GetFeasibility(Advances);
         // 37 total characters for the steps:
         // 10+7 spawner has 6+(3)+3=12 max permutations, +"CR|", remove last |; (3*12+2)=37.
-        var line = $"* {steps,-37} >>> {GetWaveIndicator()}Spawn{SpawnIndex} = {Entity.GetSummary()}{feasibility}";
-        if (prev != null)
+        var line = $"* {steps,-37} >>> {GetWaveIndicator()}Spawn{Entity.Index} = {Entity.GetSummary()}{feasibility}";
+        if (prev != null || hasChildChain)
             line += " ~~ Chain result!";
         if (isActionMultiResult)
             line += " ~~ Spawns multiple results!";
@@ -32,6 +35,8 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
         return    $"Wave {waveIndex}";
     }
 
+    private string StepSummary => $"{Entity.Index} {Entity.GroupSeed:X16} " + GetSteps();
+
     public string GetSteps(PermuteResult? prev = null)
     {
         var steps = string.Join("|", Advances.Select(z => z.GetName()));
@@ -42,45 +47,30 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
         return string.Concat(Enumerable.Repeat("-> ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
     }
 
-    private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    private static string GetFeasibility(ReadOnlySpan<Advance> advances)
     {
-        if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
-            return " -- Single advances!";
-
-        if (!skittishBase && !skittishBonus)
-            return string.Empty;
-
-        bool skittishMulti = false;
-        int bonusIndex = GetNextWaveStartIndex(advances);
-        if (bonusIndex != -1)
+        if (advances.IsAny(AdvanceExtensions.IsMultiScare))
         {
-            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
-            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
-        }
-        else
-        {
-            skittishMulti |= skittishBase && advances.IsAnyMulti();
-        }
-
-        if (advances.IsAnyMultiScare())
-        {
-            if (skittishMulti)
+            if (advances.IsAny(AdvanceExtensions.IsMultiBeta))
                 return " -- Skittish: Multi scaring with aggressive!";
             return " -- Skittish: Multi scaring!";
         }
-
-        if (skittishMulti)
+        if (advances.IsAny(AdvanceExtensions.IsMultiBeta))
             return " -- Skittish: Aggressive!";
-        return " -- Skittish: Single advances!";
-    }
 
-    public static int GetNextWaveStartIndex(ReadOnlySpan<Advance> advances)
-    {
-        for (int i = 0; i < advances.Length; i++)
+        if (advances.IsAny(z => z == Advance.B1))
         {
-            if (advances[i] == Advance.CR)
-                return i;
+            if (!advances.IsAny(AdvanceExtensions.IsMultiAggressive))
+                return " -- Skittish: Single advances!";
+            return " -- Skittish: Mostly aggressive!";
         }
-        return -1;
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiOblivious))
+            return " -- Oblivious: Aggressive!";
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiAggressive))
+            return string.Empty;
+
+        return " -- Single advances!";
     }
 }
